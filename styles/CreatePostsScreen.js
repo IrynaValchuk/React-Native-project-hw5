@@ -3,11 +3,11 @@ import { StyleSheet } from "react-native";
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "white",
+    backgroundColor: "#FFFFFF",
     paddingRight: 16,
     paddingLeft: 16,
   },
-  postImg: {
+  cameraContainer: {
     width: "100%",
     height: 240,
     marginTop: 32,
@@ -16,6 +16,23 @@ export const styles = StyleSheet.create({
     borderRadius: 8,
     borderWidth: 1,
     borderColor: "#E8E8E8",
+  },
+  camera: {
+    flex: 1,
+    height: 240,
+    justifyContent: "center",
+  },
+  previewPhoto: {
+    flex: 1,
+  },
+  takePhoto: {
+    alignSelf: "center",
+    height: 60,
+    width: 60,
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 50,
   },
   text: {
     marginBottom: 32,
