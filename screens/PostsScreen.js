@@ -38,7 +38,11 @@ export const PostsScreen = () => {
             <Text style={styles.textCount}>0</Text>
           </View>
           <View style={styles.descrBox}>
-            <TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => {
+                navigation.navigate("Map");
+              }}
+            >
               <Icon name="map-pin" size={24} color="#BDBDBD" />
             </TouchableOpacity>
             <Text style={styles.textLocation}>Location</Text>

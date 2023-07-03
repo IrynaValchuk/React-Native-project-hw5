@@ -7,6 +7,7 @@ import { PostsScreen } from "./PostsScreen";
 import { CreatePostsScreen } from "./CreatePostsScreen";
 import { ProfileScreen } from "./ProfileScreen";
 import { CommentsScreen } from "./CommentsScreen";
+import { MapScreen } from "./MapScreen";
 
 const Tabs = createBottomTabNavigator();
 
@@ -86,6 +87,27 @@ export const Home = () => {
         options={{
           tabBarButton: () => null,
           headerTitle: "Коментарі",
+          headerLeft: () => (
+            <View style={{ marginLeft: 16 }}>
+              <Icon
+                name="arrow-left"
+                size={24}
+                color="rgba(33, 33, 33, 0.8)"
+                onPress={() => navigation.goBack()}
+              />
+            </View>
+          ),
+          tabBarStyle: {
+            display: "none",
+          },
+        }}
+      />
+      <Tabs.Screen
+        name="Map"
+        component={MapScreen}
+        options={{
+          tabBarButton: () => null,
+          headerTitle: "Карта",
           headerLeft: () => (
             <View style={{ marginLeft: 16 }}>
               <Icon

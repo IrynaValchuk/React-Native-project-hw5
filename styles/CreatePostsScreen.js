@@ -18,14 +18,16 @@ export const styles = StyleSheet.create({
     borderColor: "#E8E8E8",
   },
   camera: {
-    flex: 1,
+    width: "100%",
     height: 240,
-    justifyContent: "center",
   },
-  previewPhoto: {
-    flex: 1,
+  cameraButton: {
+    position: "absolute",
+    top: "40%",
+    left: "40%",
   },
-  takePhoto: {
+  previewPhoto: { height: 240, width: "100%" },
+  btnTakePhoto: {
     alignSelf: "center",
     height: 60,
     width: 60,
@@ -34,6 +36,8 @@ export const styles = StyleSheet.create({
     alignItems: "center",
     borderRadius: 50,
   },
+
+  btnChangeType: { position: "absolute", top: "80%", left: "85%" },
   text: {
     marginBottom: 32,
     fontSize: 16,

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Text,
   View,
@@ -14,7 +14,7 @@ import {
 import { useNavigation } from "@react-navigation/native";
 import Icon from "react-native-vector-icons/Feather";
 import { Camera } from "expo-camera";
-// import * as MediaLibrary from "expo-media-library";
+import * as MediaLibrary from "expo-media-library";
 import { SubmitButton } from "../components/SubmitButton";
 
 import { styles } from "../styles/CreatePostsScreen";
@@ -24,8 +24,26 @@ export const CreatePostsScreen = () => {
   const [location, setLocation] = useState("");
   const [cameraRef, setCameraRef] = useState(null);
   const [photo, setPhoto] = useState(null);
-  // const [type, setType] = useState(Camera.Constants.Type.back);
+  const [type, setType] = useState(Camera.Constants.Type.back);
+  const [hasPermission, setHasPermission] = useState(null);
+
   const navigation = useNavigation();
+
+  useEffect(() => {
+    (async () => {
+      const { status } = await Camera.requestCameraPermissionsAsync();
+      await MediaLibrary.requestPermissionsAsync();
+
+      setHasPermission(status === "granted");
+    })();
+  }, []);
+
+  if (hasPermission === null) {
+    return <View />;
+  }
+  if (hasPermission === false) {
+    return <Text>No access to camera</Text>;
+  }
 
   const handleTitleChange = (text) => {
     setTitle(text);
@@ -40,7 +58,7 @@ export const CreatePostsScreen = () => {
     setPhoto(uri);
   };
 
-  const isButtonDisabled = !(title && location);
+  const isButtonDisabled = !(title && location && photo);
 
   const handlePublish = () => {
     console.log(`"title:" ${title}, "location:" ${location}`);
@@ -57,20 +75,13 @@ export const CreatePostsScreen = () => {
       >
         <ScrollView keyboardShouldPersistTaps="handled">
           <View style={styles.cameraContainer}>
-            <Camera
-              style={styles.camera}
-              // type={type}
-              ref={setCameraRef}
-            >
+            <Camera style={styles.camera} type={type} ref={setCameraRef}>
               {photo && (
-                <View style={styles.previewPhoto}>
-                  <Image
-                    source={{ uri: photo }}
-                    style={{ height: 240, width: "100%" }}
-                  />
+                <View>
+                  <Image source={{ uri: photo }} style={styles.previewPhoto} />
                 </View>
               )}
-              {/* <TouchableOpacity
+              <TouchableOpacity
                 onPress={() => {
                   setType(
                     type === Camera.Constants.Type.back
@@ -78,27 +89,38 @@ export const CreatePostsScreen = () => {
                       : Camera.Constants.Type.back
                   );
                 }}
-              >
-                <Icon name="refresh-cw" size={24} color="#BDBDBD" />
-              </TouchableOpacity> */}
-              <TouchableOpacity
-                style={[
-                  styles.takePhoto,
-                  {
-                    backgroundColor: photo
-                      ? "rgba(255, 255, 255, 0.3)"
-                      : "#FFFFFF",
-                  },
-                ]}
-                onPress={handleTakePhoto}
+                style={styles.btnChangeType}
+                disabled={photo}
               >
                 <Icon
-                  name="camera"
+                  name="refresh-cw"
                   size={24}
-                  color={photo ? "#FFFFFF" : "#BDBDBD"}
-                  style={styles.icon}
+                  color={
+                    type === Camera.Constants.Type.back ? "#BDBDBD" : "#FFFFFF"
+                  }
                 />
               </TouchableOpacity>
+              <View style={styles.cameraButton}>
+                <TouchableOpacity
+                  onPress={handleTakePhoto}
+                  style={[
+                    styles.btnTakePhoto,
+                    {
+                      backgroundColor: photo
+                        ? "rgba(255, 255, 255, 0.3)"
+                        : "#FFFFFF",
+                    },
+                  ]}
+                  disabled={photo}
+                >
+                  <Icon
+                    name="camera"
+                    size={24}
+                    color={photo ? "#FFFFFF" : "#BDBDBD"}
+                    style={styles.icon}
+                  />
+                </TouchableOpacity>
+              </View>
             </Camera>
           </View>
           {photo ? (
@@ -118,7 +140,7 @@ export const CreatePostsScreen = () => {
               style={[styles.input, { paddingLeft: 28 }]}
               value={location}
               onChangeText={handleLocationChange}
-              placeholder="Локація..."
+              placeholder="Місцевість..."
               placeholderTextColor="#BDBDBD"
             />
             <TouchableOpacity style={styles.locationIcon}>
