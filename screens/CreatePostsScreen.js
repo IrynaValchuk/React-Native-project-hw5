@@ -9,23 +9,24 @@ import {
   Keyboard,
   KeyboardAvoidingView,
   ScrollView,
-  StyleSheet,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import Icon from "react-native-vector-icons/Feather";
 import { Camera } from "expo-camera";
 import * as MediaLibrary from "expo-media-library";
+import * as Location from "expo-location";
 import { SubmitButton } from "../components/SubmitButton";
 
 import { styles } from "../styles/CreatePostsScreen";
 
 export const CreatePostsScreen = () => {
   const [title, setTitle] = useState("");
-  const [location, setLocation] = useState("");
+  const [locationText, setLocationText] = useState("");
   const [cameraRef, setCameraRef] = useState(null);
   const [photo, setPhoto] = useState(null);
   const [type, setType] = useState(Camera.Constants.Type.back);
   const [hasPermission, setHasPermission] = useState(null);
+  const [location, setLocation] = useState(null);
 
   const navigation = useNavigation();
 
@@ -35,6 +36,20 @@ export const CreatePostsScreen = () => {
       await MediaLibrary.requestPermissionsAsync();
 
       setHasPermission(status === "granted");
+    })();
+
+    (async () => {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== "granted") {
+        console.log("Permission to access location was denied");
+      }
+
+      let location = await Location.getCurrentPositionAsync({});
+      const coords = {
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude,
+      };
+      setLocation(coords);
     })();
   }, []);
 
@@ -50,7 +65,7 @@ export const CreatePostsScreen = () => {
   };
 
   const handleLocationChange = (text) => {
-    setLocation(text);
+    setLocationText(text);
   };
 
   const handleTakePhoto = async () => {
@@ -58,14 +73,17 @@ export const CreatePostsScreen = () => {
     setPhoto(uri);
   };
 
-  const isButtonDisabled = !(title && location && photo);
+  const isButtonDisabled = !(title && locationText && photo);
 
   const handlePublish = () => {
     console.log(`"title:" ${title}, "location:" ${location}`);
     setTitle("");
-    setLocation("");
+    setLocationText("");
     setPhoto("");
-    navigation.navigate("Posts");
+    setLocation(null);
+    navigation.navigate("Posts", {
+      location,
+    });
   };
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -138,7 +156,7 @@ export const CreatePostsScreen = () => {
             />
             <TextInput
               style={[styles.input, { paddingLeft: 28 }]}
-              value={location}
+              value={locationText}
               onChangeText={handleLocationChange}
               placeholder="Місцевість..."
               placeholderTextColor="#BDBDBD"

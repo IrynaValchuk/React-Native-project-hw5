@@ -1,11 +1,14 @@
 import { useNavigation } from "@react-navigation/native";
 import { Text, View, Image, TouchableOpacity } from "react-native";
+import { useRoute } from "@react-navigation/native";
 import Icon from "react-native-vector-icons/Feather";
 
 import { styles } from "../styles/PostsScreen";
 
 export const PostsScreen = () => {
   const navigation = useNavigation();
+
+  const location = useRoute().params?.location;
 
   return (
     <View style={styles.container}>
@@ -40,7 +43,7 @@ export const PostsScreen = () => {
           <View style={styles.descrBox}>
             <TouchableOpacity
               onPress={() => {
-                navigation.navigate("Map");
+                navigation.navigate("Map", { location: location });
               }}
             >
               <Icon name="map-pin" size={24} color="#BDBDBD" />
